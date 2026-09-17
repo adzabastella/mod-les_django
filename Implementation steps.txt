@@ -1,0 +1,112 @@
+# Project creation and setup
+- firsly i created this directory 
+- next i created a virtual environment using the command "uv venv" then i later on activated the virtual environment using the command ".venv\Scripts\activate" 
+- Next i installed Django in the venv using the command "uv pip install Django" then created the Django project using "django-admin startproject config ."( the . at the end indicates that the project should be created in this folder)
+
+# Now Assignment
+1. we had to create a new app bibliotheque
+python manage.py startapp bibliotheque
+2. created the different models for the library and author in the models.py of that app
+3. registered the app bc without registering we cannot migrate(added the app in the settings.py of the config app
+4. migrated the two models using python manage.py makemigrations then python manage.py migrate
+5.register both models in the admin.py using for example "admin.site.register(Auteur)" so that we can access the admin dashboard
+6. created an admin superadmin using "python manage.py createsuperuser" then running the django app using python manage.py runserver
+
+Exercise 2
+1.
+
+Exrecise 3
+1.Added primarykay=True as a param in the isbn model charfield then opened the shell and ran the following
+>>> from bibliotheque.models import Livre
+>>> Livre.objects.count()
+1
+>>> livre = Livre.objects.first()
+>>> livre.isbn
+'000'
+>>> livre.isbn = "BOOK001"
+>>> livre.save()
+>>> Livre.objects.count()
+2
+
+Exercise 4
+# to create the authors and books
+>>> from bibliotheque.models import Auteur,Livre
+>>> book1 = Livre.objects.create(isbn="BOOK001",titre="The book of 
+>>> author1 = Auteur.objects.get(id=1)
+>>> author2 = Auteur.objects.get(id=2)
+>>> book1 = Livre.objects.create(isbn="BOOK001",titre="The book of life",nombre_pages=100,langue="EN",auteur=author2)
+>>> book2 = Livre.objects.create(isbn="BOOK002",titre="A good guide to murder",nombre_pages=10,langue="EN",auteur=author1)
+>>> book3 = Livre.objects.create(isbn="BOOK003",titre="Le Bete genie",nombre_pages=300,langue="FR",auteur=author1)
+
+>>> Livre.objects.filter(auteur_id=1)
+<QuerySet [<Livre: Livre object (BOOK002)>, <Livre: Livre object (BOOK003)>]>
+>>> Livre.objects.filter(auteur__id=1)
+<QuerySet [<Livre: Livre object (BOOK002)>, <Livre: Livre object (BOOK003)>]>
+>>> author1.livre_set.all()
+<QuerySet [<Livre: Livre object (BOOK002)>, <Livre: Livre object (BOOK003)>]>
+>>>
+
+
+Exercise 5
+>>> from bibliotheque.models import Auteur,Livre,Genre
+>>> genre1 = Genre.objects.create(nom="isekai")
+>>> genre2= Genre.objects.create(nom="romance")
+>>> book1=Livre.objects.get(isbn="BOOK001")
+>>> book2=Livre.objects.get(isbn="BOOK002")
+>>> book1.genre.add(genre1,genre2)
+>>> book2.genre.add(genre2)
+>>> Livre.objects.filter(genre=genre1)
+<QuerySet [<Livre: Livre object (BOOK001)>]>
+>>> Livre.objects.filter(genre=genre2)
+<QuerySet [<Livre: Livre object (BOOK001)>, <Livre: Livre object (BOOK002)>]>
+
+Exeercise 6
+>>> from bibliotheque.models import Genre,Emprunteur,Emprunt, Livre,Auteur
+>>> lendee1 = Emprunteur.objects.create(nom="Lespius",email="lespius@gmail.com")
+>>> book1= Livre.objects.get(isbn="BOOK001")
+>>> book3= Livre.objects.get(isbn="BOOK003")
+>>> emprunt1 = Emprunt.objects.create(livre=book3,emprunteur=lendee1,date_emprunt="2026-09-17",date_retour_prevue="2026-09-23")
+>>> emprunt2 = Emprunt.objects.create(livre=book1,emprunteur=lendee1,date_emprunt="2026-09-15",date_retour_prevue="2026-09-23")
+>>> lendee1.livres.all()
+<QuerySet [<Livre: Livre object (BOOK003)>, <Livre: Livre object (BOOK001)>]>
+>>> Emprunt.objects.filter(emprunteur=lendee1)
+<QuerySet [<Emprunt: Emprunt object (1)>, <Emprunt: Emprunt object (2)>]>
+
+Exercise 7
+>>> from bibliotheque.models import Auteur,Livre,Genre,FicheAuteur
+>>> author3 = Auteur.objects.create(nom="test",prenom="user",date_naissance="2000-09-21")
+>>> Auteur.objects.all()
+<QuerySet [<Auteur: Auteur object (1)>, <Auteur: Auteur object (2)>, <Auteur: Auteur object (3)>]>
+>>> ficheauteur1 = FicheAuteur.objects.create(auteur=author3,biographie="A man of value with 3 years experience",site_web="https://testuser.com")
+>>> author3.ficheauteur
+<FicheAuteur: FicheAuteur object (1)>
+>>> author2 = Auteur.objects.get(id=2)
+>>> author2.ficheauteur
+Traceback (most recent call last):
+  File "<console>", line 1, in <module>
+  File "D:\Masters stuff\Django Web\TP and practices\TP2-Modeles-Django\.venv\Lib\site-packages\django\db\models\fields\related_descriptors.py", line 544, in __get__
+    raise self.RelatedObjectDoesNotExist(
+    ...<2 lines>...
+    )
+bibliotheque.models.Auteur.ficheauteur.RelatedObjectDoesNotExist: Auteur has no ficheauteur.
+Exercise 9
+>>> from bibliotheque.models import Genre,Emprunteur,Emprunt, Livre,Auteur
+>>> book1 = Livre.objects.first()
+>>> book1.est_disponible
+True
+>>> book1 = Livre.objects.get(isbn="BOOK001")
+>>> book2 = Livre.objects.get(isbn="BOOK002")
+>>> book3 = Livre.objects.get(isbn="BOOK003")
+>>> book1.est_disponible
+False
+>>> book2.est_disponible
+True
+>>> book3.est_disponible
+False
+Exercise 10
+>>> newbook = Livre.objects.get(isbn="BOOK004")
+>>> newbook.nombre_pages = 60
+>>> newbook.save()
+>>> newbook.__str__()
+' How To Ace Your Interview (BOOK004) par Enow Brenda'
+>>>
