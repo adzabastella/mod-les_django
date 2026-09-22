@@ -110,3 +110,8 @@ Exercise 10
 >>> newbook.__str__()
 ' How To Ace Your Interview (BOOK004) par Enow Brenda'
 >>>
+
+
+# TD2 : URLS, Middleware and Views
+Ex1:
+1. we were asked to create a urls.py for the url '/livres' and then link it to the urls in the config
