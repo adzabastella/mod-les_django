@@ -16,10 +16,12 @@ class ISBNConverter:
 # registering the converter
 register_converter(ISBNConverter,"isbn")
 urlpatterns = [
-    path('livres/', views.ListeLivres.as_view(), name="liste_livres"),# when someone reaches this route /livres we execute this function in the views.py
+    # path('livres/', views.ListeLivres.as_view(), name="liste_livres"), # exo12 (version avec View)
+    path('livres/', views.LivreListView.as_view(), name="liste_livres"), # exo13 (maintenant avec la ListView)
     path('livres/json', views.livre_json, name="livre_json"),# when someone reaches this route /livres we execute this function in the views.py
     path('livres/add', views.ajouter_livre, name="ajouter_livre"),# when someone reaches this route /livres we execute this function in the views.py
-    path('ouvrage/<isbn:isbn>', views.detail_livre,  name="detail_livre") # to get details on a particular book
+    path('ouvrage/<isbn:isbn>', views.LivreDetailView.as_view(),  name="detail_livre"), # exo17 (detail avec DetailView au lieu de la fonction detail_livre)
+    path('genres/<str:nom>/', views.LivresParGenre.as_view(), name="livres_genre"), # exo15 (liste des livres d'un genre)
 ]
 
 # Exercise 3
