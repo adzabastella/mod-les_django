@@ -1,0 +1,18 @@
+<!-- exo13 (template cherche automatiquement par la ListView) -->
+<h1>Liste des livres</h1>
+
+<!-- exo14 (livres au lieu de object_list) -->
+<ul>
+    {% for livre in livres %}
+        <li><a href="{% url 'detail_livre' livre.isbn %}">{{ livre.titre }}</a> par {{ livre.auteur }}</li>
+    {% empty %}
+        <li>Aucun livre</li>
+    {% endfor %}
+</ul>
+
+<!-- exo25 (lien vers la page protegee par le middleware, construit avec url et jamais en dur) -->
+<ul>
+    {% for genre in genres %}
+        <li><a href="{% url 'livres_par_genre' genre.nom %}">{{ genre.nom }}</a></li>
+    {% endfor %}
+</ul>

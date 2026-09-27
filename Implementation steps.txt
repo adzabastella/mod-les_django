@@ -115,3 +115,23 @@ Exercise 10
 # TD2 : URLS, Middleware and Views
 Ex1:
 1. we were asked to create a urls.py for the url '/livres' and then link it to the urls in the config
+
+Exo21 (order of the middleware)
+1. we put a print at the beginning and at the end of each middleware then we can see the order in the console
+>>> LogRequete avant : GET /bibliotheque/livres/
+>>> Temps avant
+>>> la vue liste des livres a bien ete executee
+>>> temps de traitement : 22.03 ms
+>>> LogRequete apres
+so the first one in the MIDDLEWARE list is the first to get the request and the last to get the response. its bc every middleware wraps the next one, so the request goes down thru the layers til it hits the vue then the response comes back up thru the same layers but in the opposite order. if we swap the two in the list the LogRequete prints come last and the Temps ones first
+
+Exo23 (MiddlewareNotUsed)
+1. this exception tells django to not put the middleware in the chain at all so it disappears silently and no error when the server starts
+we used it on TempsMiddleware, if MESURE_TEMPS_ACTIVE is not in the settings.py it raises it in __init__
+  if not hasattr(settings, "MESURE_TEMPS_ACTIVE"):
+      raise MiddlewareNotUsed("mesure du temps desactivee")
+so we can keep the middleware in the list and just remove the variable to disable it
+
+Exo24 (vue ou middleware)
+1. it should be a middleware bc the last visit date has to be saved for each connected user on all the vues without exception. if we put it in a vue we would have to copy the same code in every vue of the project and we would for sure forget one. a middleware wraps the whole chain so it applies everywhere without us repeating anything
+

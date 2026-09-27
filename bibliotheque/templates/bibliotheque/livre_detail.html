@@ -1,0 +1,7 @@
+<!-- exo17 (template de la DetailView : bibliotheque/livre_detail.html) -->
+<h2>{{ livre.titre }}</h2>
+<p>ISBN : {{ livre.isbn }}</p>
+<p>Auteur : {{ livre.auteur }}</p>
+<p>Pages : {{ livre.nombre_pages }}</p>
+
+<a href="{% url 'liste_livres' %}">Retour a la liste</a>

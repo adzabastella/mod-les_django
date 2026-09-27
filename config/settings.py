@@ -41,15 +41,24 @@ INSTALLED_APPS = [
     'membres'
 ]
 
+# ordre important, voir exo 21 : le 1er ici est le 1er a recevoir la requete
+# mais le dernier a recevoir la reponse
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "bibliotheque.middleware.LogRequeteMiddleware",
+    "bibliotheque.middleware.TempsMiddleware",
+    "bibliotheque.middleware.AutorisationLivresMiddleware",
+    "bibliotheque.middleware.TokenGenreMiddleware",
 ]
+
+# exo 23 - si cette ligne est retiree, TempsMiddleware se coupe tout seul
+MESURE_TEMPS_ACTIVE = True
 
 ROOT_URLCONF = 'config.urls'
 
@@ -60,6 +69,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
@@ -127,3 +137,5 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

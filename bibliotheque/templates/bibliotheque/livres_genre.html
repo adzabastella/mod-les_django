@@ -1,0 +1,15 @@
+<!-- exo15 (template de la vue LivresParGenre) -->
+<h1>Genre : {{ nom_genre }}</h1>
+
+<!-- exo16 (nombre total ajoute dans get_context_data) -->
+<p>Nombre de livres dans ce genre : {{ nombre_livres }}</p>
+
+<ul>
+    {% for livre in livres %}
+        <li><a href="{% url 'detail_livre' livre.isbn %}">{{ livre.titre }}</a></li>
+    {% empty %}
+        <li>Aucun livre pour ce genre</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'liste_livres' %}">Retour a la liste</a>
