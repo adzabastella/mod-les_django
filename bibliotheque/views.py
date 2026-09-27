@@ -2,6 +2,7 @@ from django.http import HttpRequest, HttpResponse, Http404, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
+import json
 
 from .models import *
 # Create your views here.
@@ -14,16 +15,17 @@ class ListeLivres(View):
         livres = Livre.objects.all()
 
         html = ""
-        count =0
-        for livre in livres:
-            count +=1
+        for index,livre in  enumerate(livres):
+
             url = reverse("detail_livre",args=(livre.isbn,)) # this is used to return back the prefix url for that particular urlname
-            html += f"{count}.<a href ={url}>{livre.__str__()}</a> <br>"
+            html += f"{index+1}. <a href ={url}>{livre.__str__()}</a> <br>"
 
         return HttpResponse(html)
 
 def detail_livre(request,isbn):
-   livre = Livre.objects.get(isbn=isbn)
+   livre = Livre.objects.get(isbn=isbn) # we need to add a try and catch here
+   # get can only be used on a unique attribute and it produces an error when it doesnot exist and when more than one values are been returned
+   # filter returns a list(queryset) but does not generate an error and rather returns an empty list
    if livre is None:
        return Http404(f"Book with isbn {isbn} not found")
    html = f""" <h2>{livre.titre}</h2> 
@@ -47,5 +49,6 @@ def livre_json(request):
     for livre in livres:
         book = { "isbn": livre.isbn, "title":livre.titre}
         books.append(book)
+    row_json = json.dumps(books) # another method to convert the list to json and then return it in the HttpResponse
     return JsonResponse(books, safe=False)
 # safe = false because we want to tell django that we are intentionally returning a list

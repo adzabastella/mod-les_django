@@ -5,10 +5,10 @@ from . import views
 
 class ISBNConverter:
     regex = "BOOK[0-9]{3}" # to match what i have
-    # regex = r"978-[0-9]-[0-9]{4}-[0-9]{4}-[0-9]" # corresponding to the isbn-13 format stated by the lecturer
+    # regex = "[0-9]{3}-[0-9]-[0-9]{4}-[0-9]{4}-[0-9]" # corresponding to the isbn-13 format stated by the lecturer
 
     def to_python(self, value):
-        return value
+        return value # returns the value in the datatype format expected by the view
 
     def to_url(self, value):
         return value
@@ -33,6 +33,6 @@ urlpatterns = [
 
 #A converter is a class that includes the following
 # a regex class attribute
-# a to_python(self,value) for converting the matched string into a tyoe that will be used in the view function
+# a to_python(self,value) for converting the matched string into a type that will be used in the view function
 # a to_url(self,value) for converting the python type into string to add to the url
 
