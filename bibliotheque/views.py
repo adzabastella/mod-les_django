@@ -1,7 +1,14 @@
 from django.http import HttpRequest, HttpResponse, Http404, JsonResponse
 from django.shortcuts import render
+from rest_framework.decorators import api_view, action
+from rest_framework.views import APIView
 from django.urls import reverse
+from rest_framework import generics,viewsets
+from pagination import LivrePagination
+
 from django.views import View
+from .serializers import *
+from rest_framework.response import Response
 from django.views.generic import ListView, DetailView # exo13 et exo17 (import des vues generiques)
 
 from .models import *
@@ -116,6 +123,68 @@ def livre_json(request):
     return JsonResponse(books, safe=False)
 # safe = false because we want to tell django that we are intentionally returning a list
 
+# Ex 10
+@api_view(["GET", "POST"])
+def livre_list(request):
+    if request.method == "GET":
+        serializer = LivreSerializer(Livre.objects.all(), many=True)
+        return Response(serializer.data)
+
+    serializer = LivreSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    serializer.save()
+    return Response(serializer.data, status=201)
+
+# Ex 10
+# class LivreList(APIView):
+#     def get(self, request):
+#         serializer = LivreSerializer(Livre.objects.all(), many=True)
+#         return Response(serializer.data)
+#
+#     def post(self, request):
+#         serializer = LivreSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         serializer.save()
+#         return Response(serializer.data, status=201)
+
+class LivreList(generics.ListCreateAPIView):
+    serializer_class = LivreSerializer
+
+    def get_queryset(self):
+        queryset = Livre.objects.select_related("auteur")
+        genre = self.request.query_params.get("genre")
+        if genre:
+            queryset = queryset.filter(genre__nom__iexact=genre)
+            # this is to say that the genre field in the book should match the "nom" in the genre model
+        return queryset
+    def perform_create(self, serializer):
+        serializer.save(ajoute_par=self.request.user)
+
+# EX 12
+class LivreDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Livre.objects.select_related("auteur")
+    serializer_class = LivreSerializer
+
+
+class LivreViewSet(viewsets.ModelViewSet):
+    serializer_class = LivreSerializer
+    pagination_class = LivrePagination
+
+    @action(detail=False)  # will automatically create the url livres/disponibles/
+    def disponibles(self, request):
+        livres = [l for l in self.get_queryset() if l.est_disponible]
+        serializer = self.get_serializer(livres, many=True)
+        return Response(serializer.data)
+
+    def get_queryset(self):
+        queryset = Livre.objects.select_related("auteur")
+        genre = self.request.query_params.get("genre")          #
+        if genre:
+            queryset = queryset.filter(genre__nom__iexact=genre)
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(ajoute_par=self.request.user)
 
 # exo13 
 # le template que django cherche c'est bibliotheque/livre_list.html
@@ -136,3 +205,8 @@ def livre_json(request):
 # le 404, la pagination, le contexte sont deja geres donc c'est plus rapide a mettre en place.
 # Et si on a juste besoin de changer une petite partie (filtrer par genre) on redefinit seulement get_queryset.
 # Par contre si on doit redefinir presque toutes les methodes, la CBV devient plus compliquee qu'une simple fonction.
+
+
+# TP3 : ex 19
+# the viewset + router is used for classique CRUD so it helps the developer ehen its normal CRUD
+# the generic view is used when we have something that doesnot follow the normal url and pattern or logic

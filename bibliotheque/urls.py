@@ -1,6 +1,11 @@
 
 from django.urls import path, register_converter
 from . import views
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+
+from .views import *
 
 
 class ISBNConverter:
@@ -13,17 +18,26 @@ class ISBNConverter:
     def to_url(self, value):
         return value
 
-# registering the converter
-register_converter(ISBNConverter,"isbn")
+router = DefaultRouter()
+router.register(r"livres", LivreViewSet, basename="livre")
+
 urlpatterns = [
-    # path('livres/', views.ListeLivres.as_view(), name="liste_livres"), # exo12 (version avec View)
-    path('livres/', views.LivreListView.as_view(), name="liste_livres"), # exo13 (maintenant avec la ListView)
-    path('livres/json', views.livre_json, name="livre_json"),# when someone reaches this route /livres we execute this function in the views.py
-    path('livres/add', views.ajouter_livre, name="ajouter_livre"),# when someone reaches this route /livres we execute this function in the views.py
-    path('livres/commentaire', views.ajouter_commentaire, name="ajouter_commentaire"),
-    path('ouvrage/<isbn:isbn>/', views.LivreDetailView.as_view(),  name="detail_livre"),
-    path('livres-par-genre/<str:nom>/', views.LivresParGenre.as_view(), name="livres_par_genre"), #the same view with exercide 15 but with middleware
+    path("", include(router.urls)),
 ]
+# registering the converter
+# register_converter(ISBNConverter,"isbn")
+# urlpatterns = [
+#     # path('livres/', views.ListeLivres.as_view(), name="liste_livres"), # exo12 (version avec View)
+#     # path('livres/', views.LivreListView.as_view(), name="liste_livres"), # exo13 (maintenant avec la ListView)
+#     # path('livres/', views.livre_list, name="liste_livres"),
+#     # path('livres/', views.LivreList.as_view(), name="liste_livres"),
+#     # path('livres/json', views.livre_json, name="livre_json"),# when someone reaches this route /livres we execute this function in the views.py
+#     # path('livres/add', views.ajouter_livre, name="ajouter_livre"),# when someone reaches this route /livres we execute this function in the views.py
+#     path('livres/commentaire', views.ajouter_commentaire, name="ajouter_commentaire"),
+#     # path('ouvrage/<isbn:isbn>/', views.LivreDetailView.as_view(),  name="detail_livre"),
+#     # path('livres/<isbn:isbn>/', views.LivreDetail.as_view(),  name="detail_livre_2"), # ex 12
+#     path('livres-par-genre/<str:nom>/', views.LivresParGenre.as_view(), name="livres_par_genre"), #the same view with exercide 15 but with middleware
+# ]
 
 # Exercise 3
 # the page livres/nouveautes will never display what we want it will always enter the first condition so it will instead assume that  we want to view a book with isbn "nouveautes"

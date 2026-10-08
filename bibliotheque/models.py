@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Auteur(models.Model):
@@ -32,6 +33,7 @@ class Livre(models.Model):
     date_publication = models.DateField(blank=True, null=True)
     auteur = models.ForeignKey(Auteur, on_delete=models.SET_NULL,null=True)
     genre = models.ManyToManyField(Genre)
+    ajoute_par = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
         ordering = ['titre'] # to sort by title by default whenever we query it
@@ -69,6 +71,7 @@ class Emprunt(models.Model):
     date_emprunt = models.DateField()
     date_retour_prevue = models.DateField()
     date_retour_effective = models.DateField(blank=True,null=True)
+
 
     def __str__(self):
         return f"{self.emprunteur} - {self.livre} le {self.date_emprunt}"
